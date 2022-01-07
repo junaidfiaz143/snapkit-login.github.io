@@ -1,0 +1,82 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+		integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+		crossorigin=""/>
+		<!-- Make sure you put this AFTER Leaflet's CSS -->
+		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+		integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+		crossorigin="">
+		</script>
+		<script type='text/javascript' src='snap-login.js'></script>
+		<style>
+			#map { height: 380px; }
+			.leaflet-containner {
+			    background-color: #AAD3DF;
+			}
+
+		</style>
+	</head>
+	<body>
+    <div id="display_name"></div>
+
+    <img id="bitmoji" />
+
+    <div id="external_id"></div>
+
+    <hr />
+
+    <div id="my-login-button-target"></div>
+
+		<div id="maap"></div>
+
+       <script>
+      window.snapKitInit = function () {
+        var loginButtonIconId = "my-login-button-target";
+        // Mount Login Button
+        snap.loginkit.mountButton(loginButtonIconId, {
+                clientId: '06022510-8b4e-471a-a24f-9d0a3c0ee12f',
+                redirectURI: 'vibecheck://snapchat/oauth2',
+          scopeList: [            "user.display_name",            "user.bitmoji.avatar",            "user.external_id",          ],
+          handleResponseCallback: function () {
+            snap.loginkit.fetchUserInfo().then(
+              function (result) {
+                console.log("User info:", result.data.me);
+                document.getElementById("display_name").innerHTML =
+                  result.data.me.displayName;
+                document.getElementById("bitmoji").src =
+                  result.data.me.bitmoji.avatar;
+                document.getElementById("external_id").src =
+                  result.data.me.externalId;
+              },
+              function (err) {
+                console.log(err); // Error
+              }
+            );
+          },
+        });
+      };
+
+      // Load the SDK asynchronously
+      (function (d, s, id) {
+        var js,
+          sjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "https://sdk.snapkit.com/js/v1/login.js";
+        sjs.parentNode.insertBefore(js, sjs);
+      })(document, "script", "loginkit-sdk");
+    </script>
+		<script>
+		var map = L.map('map').setView([51.505, -0.09], 13);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+L.marker([51.5, -0.09]).addTo(map)
+    .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+    .openPopup();</script>
+	</body>
+</html>
